@@ -1,9 +1,10 @@
 import Header from "./components/Header";
 import { BsPinAngle } from "react-icons/bs";
-import {BiPencil} from 'react-icons/bi'
+import { BiPencil } from "react-icons/bi";
 import { AiOutlinePlus } from "react-icons/ai";
 import { useState } from "react";
 import Edit from "./components/Edit";
+import { Popover, Transition } from "@headlessui/react";
 
 function App() {
   const [extend, setExtend] = useState(false);
@@ -18,6 +19,10 @@ function App() {
 
   return (
     <div className="bg-background h-full">
+      <div className="flex justify-center items-center w-screen z-10 bg-black opacity-30 h-screen ">
+      <Edit className=''/>
+      </div>
+      
       <Header />
 
       <section
@@ -56,24 +61,28 @@ function App() {
           <h2 className="font-bold capitalize text-gray-700">Default Note</h2>
           <p className="text-gray-600">Had fun building this ❤❤</p>
           <div className="absolute top-3 right-4">
-            <BsPinAngle size={20}/>
+            <BsPinAngle size={20} />
           </div>
         </div>
 
         {notes.map((note) => (
-          <div className="bg-card rounded-lg  p-4 hover:shadow-lg border">
+          <div className="bg-card rounded-lg  p-4 hover:shadow-lg border ">
             <div className="flex">
-            <h2 className="font-bold capitalize text-gray-700 w-[100%]">{note.title}</h2>
-            <p className="w-[6%] cursor-pointer"><BiPencil size={20}/></p>
+              <h2 className="font-bold capitalize text-gray-700 w-[100%]">
+                {note.title}
+              </h2>
+              <p className="w-[6%] cursor-pointer">
+                
+                  
+                    <BiPencil size={20} />
+                  
+              </p>
             </div>
-            
+
             <p className="text-gray-600">{note.content}</p>
-           
-            
           </div>
         ))}
       </section>
-      <Edit/>
     </div>
   );
 }
