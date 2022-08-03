@@ -1,9 +1,9 @@
 import Header from "./components/Header";
 import { BsPinAngle, BsTrash } from "react-icons/bs";
-import { BiPencil } from "react-icons/bi";
 import { AiOutlinePlus } from "react-icons/ai";
 import { useState, useEffect } from "react";
-import { Popover, Transition } from "@headlessui/react";
+import Skeleton from "./components/Skeleton";
+
 import {
   addDoc,
   collection,
@@ -22,15 +22,16 @@ function App() {
   const [notes, setNotes] = useState([]);
   const [error, setError] = useState(false);
 
+
   //create note
   const addNote = async () => {
-    if(content === ''){
+    if(content === '' || title=== ''){
       setError(true)
       setTimeout(() => {
         setError(false)
       }, 3000);
       return
-    } else {
+    }else  {
     await addDoc(collection(db, "notes"), {
       title: title,
       content: content,
@@ -45,18 +46,22 @@ function App() {
     const unsubscribe = onSnapshot(q, (querySnapshot) => {
       let notesArr = [];
       querySnapshot.forEach((doc) => {
-        notesArr.push({ ...doc.data(), id: doc.id });
+        notesArr.push({  ...doc.data(), id: doc.id });
       });
+      notesArr.reverse()
       setNotes(notesArr);
     });
     return () => unsubscribe();
   }, []);
 
   //update note
-  const updateNote = (id) => {
-    setTitle(title);
-    setContent(content);
-  };
+  // const updateNote = (id) => {
+  //   const specificItem = notes.find((item)=> item.id === id)
+  //   setTitle(specificItem.title);
+  //   setContent(specificItem.content);
+  //   setEditID(specificItem.id)
+  //   setEditItem(specificItem)
+  // };
 
   //delete note
   const deleteNote = async (id) => {
@@ -110,11 +115,11 @@ function App() {
           </div>
         </div>
       </section>
-
-      <section className="p-7 md:p-16 grid md:grid-cols-2 xl:grid-cols-4 gap-4">
+            {notes.length > 0 ? (
+              <section className="p-7 md:p-16 grid md:grid-cols-2 xl:grid-cols-4 gap-4">
         <div className="bg-card rounded-lg h-28 p-4 hover:shadow-lg border relative">
           <h2 className="font-bold capitalize text-gray-700">Default Note</h2>
-          <p className="text-gray-600">Had fun building this ❤❤</p>
+          <p className="text-gray-600">Had fun building this app ❤❤</p>
           <div className="absolute top-3 right-4">
             <BsPinAngle size={20} />
           </div>
@@ -122,7 +127,7 @@ function App() {
 
         {notes.map((note) => (
           <div
-            className="bg-card rounded-lg  p-4 hover:shadow-lg border "
+            className="bg-card rounded-lg  p-4 hover:shadow-lg border border-gray-200 "
             key={note.id}
           >
             <div className="flex">
@@ -135,6 +140,7 @@ function App() {
                   className="text-red-500 cursor-pointer "
                   onClick={() => deleteNote(note.id)}
                 />
+                
               </p>
             </div>
 
@@ -142,6 +148,8 @@ function App() {
           </div>
         ))}
       </section>
+            ) : <Skeleton/>}
+      
     </div>
   );
 }
