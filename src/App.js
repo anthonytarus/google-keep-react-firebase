@@ -2,27 +2,54 @@ import Header from "./components/Header";
 import { BsPinAngle } from "react-icons/bs";
 import { BiPencil } from "react-icons/bi";
 import { AiOutlinePlus } from "react-icons/ai";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Edit from "./components/Edit";
 import { Popover, Transition } from "@headlessui/react";
+import { collection, onSnapshot, query } from "firebase/firestore";
+import { db } from "./firebase.config";
+
 
 function App() {
   const [extend, setExtend] = useState(false);
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [notes, setNotes] = useState([]);
+  const [openEdit, setOpenEdit] = useState(false);
 
   const addNote = () => {
     const newNote = { title, content };
     setNotes([newNote, ...notes]);
   };
 
+  const handleOpenEdit = () => {
+    setOpenEdit(false);
+  };
+
+  //create note
+
+  //read note
+  useEffect(()=>{
+    const q = query(collection(db, 'notes'))
+    const unsubscribe = onSnapshot(q, (querySnapshot)=> {
+      let notesArr = []
+      querySnapshot.forEach(doc=>{
+        notesArr.push({...doc.data(), id:doc.id})
+      })
+      setNotes(notesArr)
+    })
+    return ()=> unsubscribe()
+  }, [])
+
+  //update note
+
+  //delete note
+
   return (
     <div className="bg-background h-full">
-      <div className="flex justify-center items-center w-screen z-10 bg-black opacity-30 h-screen ">
+      {/* <div className="flex justify-center items-center w-screen z-10 bg-black opacity-30 h-screen ">
       <Edit className=''/>
-      </div>
-      
+      </div> */}
+
       <Header />
 
       <section
@@ -72,10 +99,7 @@ function App() {
                 {note.title}
               </h2>
               <p className="w-[6%] cursor-pointer">
-                
-                  
-                    <BiPencil size={20} />
-                  
+                <BiPencil size={20} onClick={() => setOpenEdit(true)} />
               </p>
             </div>
 
@@ -83,6 +107,11 @@ function App() {
           </div>
         ))}
       </section>
+      {openEdit && (
+        <section>
+          <Edit />
+        </section>
+      )}
     </div>
   );
 }
