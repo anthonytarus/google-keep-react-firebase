@@ -5,7 +5,7 @@ import { AiOutlinePlus } from "react-icons/ai";
 import { useState, useEffect } from "react";
 import Edit from "./components/Edit";
 import { Popover, Transition } from "@headlessui/react";
-import { collection, onSnapshot, query } from "firebase/firestore";
+import { addDoc, collection, onSnapshot, query, updateDoc } from "firebase/firestore";
 import { db } from "./firebase.config";
 
 
@@ -16,16 +16,32 @@ function App() {
   const [notes, setNotes] = useState([]);
   const [openEdit, setOpenEdit] = useState(false);
 
-  const addNote = () => {
-    const newNote = { title, content };
-    setNotes([newNote, ...notes]);
-  };
+  // const addNote = () => {
+  //   if(content == ''){
+  //     alert('add item')
+  //     return
+  //   }
+
+
+  //     const newNote = { title, content };
+  //     setNotes([newNote, ...notes]);
+    
+    
+  // };
 
   const handleOpenEdit = () => {
     setOpenEdit(false);
   };
 
   //create note
+  const addNoteF = async () => {
+    await addDoc(collection(db, 'notes'),{
+      title: title,
+      content: content  
+    })
+    setTitle('')
+    setContent('')
+};
 
   //read note
   useEffect(()=>{
@@ -41,6 +57,7 @@ function App() {
   }, [])
 
   //update note
+  
 
   //delete note
 
@@ -60,6 +77,7 @@ function App() {
           {extend && (
             <input
               type="text"
+              value={title}
               className="p-1 outline-none text-xl"
               placeholder="Title"
               name="title"
@@ -68,6 +86,7 @@ function App() {
           )}
 
           <textarea
+          value={content}
             className="outline-none text-xl"
             placeholder="Take a note..."
             onChange={(e) => setContent(e.target.value)}
@@ -75,7 +94,7 @@ function App() {
           <div className="absolute -bottom-5 right-[8%]">
             <p
               className="bg-addBtn rounded-full w-10 h-10 cursor-pointer flex items-center justify-center text-4xl text-white"
-              onClick={addNote}
+              onClick={addNoteF}
             >
               <AiOutlinePlus />
             </p>
