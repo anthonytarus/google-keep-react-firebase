@@ -5,7 +5,7 @@ import { AiOutlinePlus } from "react-icons/ai";
 import { useState, useEffect } from "react";
 import Edit from "./components/Edit";
 import { Popover, Transition } from "@headlessui/react";
-import { addDoc, collection, onSnapshot, query, updateDoc } from "firebase/firestore";
+import { addDoc, collection, deleteDoc, doc, onSnapshot, query, updateDoc } from "firebase/firestore";
 import { db } from "./firebase.config";
 
 
@@ -15,23 +15,6 @@ function App() {
   const [content, setContent] = useState("");
   const [notes, setNotes] = useState([]);
   const [openEdit, setOpenEdit] = useState(false);
-
-  // const addNote = () => {
-  //   if(content == ''){
-  //     alert('add item')
-  //     return
-  //   }
-
-
-  //     const newNote = { title, content };
-  //     setNotes([newNote, ...notes]);
-    
-    
-  // };
-
-  const handleOpenEdit = () => {
-    setOpenEdit(false);
-  };
 
   //create note
   const addNoteF = async () => {
@@ -60,6 +43,9 @@ function App() {
   
 
   //delete note
+  const deleteNote = async (id)=>{
+    await deleteDoc(doc(db, 'notes', id))
+  }
 
   return (
     <div className="bg-background h-full">
@@ -112,13 +98,13 @@ function App() {
         </div>
 
         {notes.map((note) => (
-          <div className="bg-card rounded-lg  p-4 hover:shadow-lg border ">
+          <div className="bg-card rounded-lg  p-4 hover:shadow-lg border " key={note.id}>
             <div className="flex">
               <h2 className="font-bold capitalize text-gray-700 w-[100%]">
                 {note.title}
               </h2>
               <p className="w-[6%] cursor-pointer">
-                <BiPencil size={20} onClick={() => setOpenEdit(true)} />
+                <BiPencil size={20} onClick={()=>deleteNote(note.id)} />
               </p>
             </div>
 
